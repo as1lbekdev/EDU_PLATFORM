@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPlatform</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+    <!-- AUTH -->
+    <div id="authPage" class="auth-page">
+        <div class="auth-bg"><div class="blob blob1"></div><div class="blob blob2"></div><div class="blob blob3"></div></div>
+        <div class="auth-card">
+            <div class="auth-brand">
+                <div class="brand-icon">📚</div>
+                <h1>EduPlatform</h1>
+                <p>Maktab o'quvchilari uchun online ta'lim</p>
+            </div>
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('login',this)">Kirish</button>
+                <button class="tab-btn" onclick="switchTab('register',this)">Ro'yxat</button>
+            </div>
+            <div id="loginForm" class="auth-form">
+                <div class="form-group"><label>Elektron pochta</label><input type="email" id="loginEmail" placeholder="email@gmail.com"></div>
+                <div class="form-group"><label>Parol</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
+                <div id="loginError" class="error-msg hidden"></div>
+                <button class="btn-primary" onclick="login()">Kirish →</button>
+            </div>
+            <!-- Ro'yxat 1-bosqich: Email + Kod yuborish -->
+            <div id="registerForm" class="auth-form hidden">
+                <div class="form-group"><label>To'liq ism</label><input type="text" id="regName" placeholder="Ism Familiya"></div>
+                <div class="form-group"><label>Gmail pochta</label><input type="email" id="regEmail" placeholder="email@gmail.com"></div>
+                <div class="form-group"><label>Parol</label><input type="password" id="regPassword" placeholder="Kamida 6 ta belgi"></div>
+                <div id="regError" class="error-msg hidden"></div>
+                <button class="btn-primary" id="sendCodeBtn" onclick="sendCode()">📧 Emailga kod yuborish →</button>
+            </div>
+            <!-- Ro'yxat 2-bosqich: Kod tasdiqlash -->
+            <div id="verifyForm" class="auth-form hidden">
+                <div class="verify-info">
+                    <div style="font-size:32px;margin-bottom:8px">📧</div>
+                    <p id="verifyEmailText" style="font-weight:600;color:var(--primary)"></p>
+                    <p style="color:var(--text-muted);font-size:13px">Emailingizga 6 raqamli kod yuborildi</p>
+                </div>
+                <div class="form-group">
+                    <label>Tasdiqlash kodi</label>
+                    <input type="text" id="verifyCode" placeholder="000000" maxlength="6"
+                           style="font-size:28px;letter-spacing:8px;text-align:center;font-family:monospace"
+                           oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                </div>
+                <div id="verifyError" class="error-msg hidden"></div>
+                <button class="btn-primary" onclick="verifyAndRegister()">✅ Tasdiqlash →</button>
+                <button class="btn-secondary" style="width:100%;margin-top:8px" onclick="resendCode()">🔄 Qayta yuborish</button>
+                <button class="btn-secondary" style="width:100%;margin-top:8px;background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer" onclick="backToRegister()">← Orqaga</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDENT DASHBOARD -->
+    <div id="studentDashboard" class="dashboard hidden">
+        <aside class="sidebar">
+            <div class="sidebar-brand">📚 EduPlatform</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" onclick="showSection('subjects');setActive(this)"><span>🏠</span> Fanlar</a>
+                <a href="#" class="nav-item" onclick="showSection('myResults');setActive(this)"><span>📊</span> Natijalarim</a>
+                <a href="#" class="nav-item" onclick="showSection('aiAdvice');setActive(this)"><span>🤖</span> AI Tavsiya</a>
+                <a href="#" class="nav-item" onclick="showSection('school');setActive(this)"><span>🏫</span> Maktabim</a>
+                <a href="#" class="nav-item" onclick="showSection('profile');setActive(this)"><span>👤</span> Profil</a>
+            </nav>
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebarAvatar">A</div>
+                <div><div id="sidebarName" class="user-name">-</div><div id="sidebarEmail" class="user-email">-</div></div>
+                <button onclick="logout()" class="logout-btn" title="Chiqish">⏻</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div id="subjectsSection" class="section">
+                <div class="section-header"><h2>Fanlar</h2><p>O'rganmoqchi bo'lgan faningizni tanlang</p></div>
+                <div id="subjectsList" class="subjects-grid"></div>
+            </div>
+            <div id="chaptersSection" class="section hidden">
+                <div class="section-header"><button class="back-btn" onclick="showSection('subjects')">← Orqaga</button><h2 id="subjectTitle">-</h2></div>
+                <div id="chaptersList" class="chapters-list"></div>
+            </div>
+            <div id="topicsSection" class="section hidden">
+                <div class="section-header"><button class="back-btn" onclick="showSection('chapters')">← Orqaga</button><h2 id="chapterTitle">-</h2></div>
+                <div id="topicsList" class="topics-list"></div>
+                <div class="chapter-test-banner" id="chapterTestBanner">
+                    <div><h3>📝 Bob testi</h3><p>Bu bob bo'yicha umumiy test. Natija emailingizga yuboriladi.</p></div>
+                    <button class="btn-accent" onclick="startChapterTest()">Testni boshlash</button>
+                </div>
+            </div>
+            <div id="topicLearnSection" class="section hidden">
+                <div class="section-header"><button class="back-btn" onclick="showSection('topics')">← Orqaga</button><h2 id="topicTitle">-</h2></div>
+                <div class="learn-layout">
+                    <div class="video-card">
+                        <h3>🎬 Dars videosi</h3>
+                        <div class="video-wrapper" id="videoWrapper">
+                            <div class="video-placeholder"><span>🎬</span><p>Video yuklanmoqda...</p></div>
+                        </div>
+                        <button class="btn-secondary" onclick="markWatched()">✅ Videoni ko'rdim</button>
+                    </div>
+                    <div class="test-start-card">
+                        <span class="test-badge">📝 Mavzu testi</span>
+                        <h3>Bilimingizni sinab ko'ring</h3>
+                        <p style="color:var(--text-muted);font-size:13px">O'tish bali: 60%</p>
+                        <p id="topicDurText" style="color:var(--text-muted);font-size:13px">⏱️ 30 daqiqa</p>
+                        <button class="btn-primary" onclick="startTopicTest()">Testni boshlash →</button>
+                    </div>
+                </div>
+            </div>
+            <div id="testSection" class="section hidden">
+                <div class="test-header">
+                    <div><h2 id="testTitle">Test</h2><span id="testProgress">0 savol</span></div>
+                    <div class="timer" id="timer">⏱️ 00:00</div>
+                </div>
+                <div id="testQuestions" class="test-questions"></div>
+                <div class="test-footer"><button class="btn-primary" onclick="submitTest()">✅ Testni yakunlash</button></div>
+            </div>
+            <div id="resultSection" class="section hidden">
+                <div class="result-card">
+                    <div id="resultIcon" class="result-icon">🎉</div>
+                    <h2 id="resultTitle">Natija</h2>
+                    <div class="result-stats">
+                        <div class="stat-box"><span id="resultPercent">0%</span><label>Foiz</label></div>
+                        <div class="stat-box"><span id="resultCorrect">0/0</span><label>To'g'ri</label></div>
+                        <div class="stat-box"><span id="resultStatus">-</span><label>Holat</label></div>
+                    </div>
+                    <p id="resultMsg" style="color:var(--text-muted);font-size:14px;margin-bottom:20px"></p>
+                    <div class="result-actions">
+                        <button class="btn-secondary" onclick="showSection('subjects')">🏠 Bosh sahifa</button>
+                        <button class="btn-primary" onclick="retakeTest()">🔄 Qayta topshirish</button>
+                    </div>
+                </div>
+                <div id="aiFeedbackBox" class="ai-feedback-box hidden"></div>
+            </div>
+            <div id="myResultsSection" class="section hidden">
+                <div class="section-header"><h2>📊 Natijalarim</h2></div>
+                <div id="myResultsList"></div>
+            </div>
+            <div id="aiAdviceSection" class="section hidden">
+                <div class="section-header"><h2>🤖 AI Tahlil</h2><p>Har bir test bo'yicha sun'iy intellekt sharhi</p></div>
+                <div id="aiAnalysisDiv"><div class="ai-loading"><div class="loader"></div><p>Yuklanmoqda...</p></div></div>
+            </div>
+            <div id="schoolSection" class="section hidden">
+                <div class="section-header"><h2>🏫 Maktabim</h2><p>Maktabingizni tanlang yoki o'zgartiring</p></div>
+                <div id="mySchoolInfo" class="school-info-box"></div>
+                <div class="school-select-card" id="schoolSelectCard">
+                    <h3>Maktabni tanlash</h3>
+                    <div class="form-group"><label>Viloyat</label>
+                        <select id="regionSelect" onchange="loadDistricts(this.value)" class="school-select">
+                            <option value="">-- Viloyatni tanlang --</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Tuman / Shahar</label>
+                        <select id="districtSelect" onchange="loadSchools(this.value)" class="school-select" disabled>
+                            <option value="">-- Avval viloyat tanlang --</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Maktab</label>
+                        <select id="schoolSelect" class="school-select" disabled>
+                            <option value="">-- Avval tuman tanlang --</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" onclick="saveSchool()">💾 Saqlash</button>
+                </div>
+            </div>
+            <div id="profileSection" class="section hidden">
+                <div class="section-header"><h2>👤 Profilim</h2></div>
+                <div class="profile-card">
+                    <div class="profile-avatar-wrap">
+                        <div id="profileAvatarImg" class="profile-avatar-img">
+                            <div class="profile-avatar" id="profileAvatar">A</div>
+                        </div>
+                        <div class="profile-avatar-actions">
+                            <label class="btn-sm btn-edit" style="cursor:pointer">
+                                📷 Rasm yuklash
+                                <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+                            </label>
+                            <button class="btn-sm btn-delete" id="deleteAvatarBtn" onclick="handleAvatarDelete()" style="display:none">🗑️ O'chirish</button>
+                        </div>
+                        <p class="profile-avatar-hint">JPG, PNG, WEBP • Max 5MB</p>
+                    </div>
+                    <h3 id="profileName">-</h3>
+                    <p id="profileEmail" style="color:var(--text-muted)">-</p>
+                    <div id="profileLoginInfo" class="login-info-box"></div>
+                    <div class="result-stats" id="profileStats"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboard" class="dashboard hidden">
+        <aside class="sidebar sidebar-admin">
+            <div class="sidebar-brand">⚙️ Admin Panel</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" onclick="adminShowSection('adminSubjects');setAdminActive(this)"><span>📚</span> Fanlar</a>
+                <a href="#" class="nav-item" onclick="adminShowSection('adminSchools');setAdminActive(this)"><span>🏫</span> Maktablar</a>
+                <a href="#" class="nav-item" onclick="adminShowSection('adminResults');setAdminActive(this)"><span>📊</span> Natijalar</a>
+                <a href="#" class="nav-item" onclick="adminShowSection('adminUsers');setAdminActive(this)"><span>👥</span> O'quvchilar</a>
+            </nav>
+            <div class="sidebar-user">
+                <div class="user-avatar" style="background:#ef4444">A</div>
+                <div><div class="user-name">Admin</div></div>
+                <button onclick="logout()" class="logout-btn">⏻</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div id="adminSubjectsSection" class="section">
+                <div class="section-header"><h2>Fanlarni boshqarish</h2><button class="btn-primary" onclick="openModal('Fan qo\'shish',addSubjectForm())">+ Fan qo'shish</button></div>
+                <div id="adminSubjectsList" class="admin-list"></div>
+            </div>
+            <div id="adminChaptersSection" class="section hidden">
+                <div class="section-header"><button class="back-btn" onclick="adminShowSection('adminSubjects')">← Orqaga</button><h2 id="adminSubjectTitle">Boblar</h2><button class="btn-primary" onclick="openModal('Bob qo\'shish',addChapterForm())">+ Bob qo'shish</button></div>
+                <div id="adminChaptersList" class="admin-list"></div>
+            </div>
+            <div id="adminTopicsSection" class="section hidden">
+                <div class="section-header"><button class="back-btn" onclick="adminBackToChapters()">← Orqaga</button><h2 id="adminChapterTitle">Mavzular</h2><button class="btn-primary" onclick="openModal('Mavzu qo\'shish',addTopicForm())">+ Mavzu qo'shish</button></div>
+                <div id="adminTopicsList" class="admin-list"></div>
+                <div class="import-section">
+                    <h3>📤 Bob testi savollarini Excel orqali yuklash</h3>
+                    <div class="import-hint">Format: A=Savol | B=1-variant | C=2-variant | D=3-variant | E=4-variant | F=To'g'ri javob (1-4)</div>
+                    <div class="import-row"><input type="file" id="chapterExcelFile" accept=".xlsx,.xls"><button class="btn-secondary" onclick="importChapterQ()">📤 Yuklash</button></div>
+                </div>
+            </div>
+            <div id="adminSchoolsSection" class="section hidden">
+                <div class="section-header"><h2>🏫 Maktablar boshqaruvi</h2></div>
+                <div class="admin-school-layout">
+                    <div class="admin-school-panel">
+                        <h3>Viloyatlar</h3>
+                        <div class="import-row" style="margin-bottom:12px">
+                            <input type="text" id="newRegionName" placeholder="Viloyat nomi" class="school-select" style="flex:1">
+                            <button class="btn-sm btn-edit" onclick="adminSaveRegion()">+ Qo'shish</button>
+                        </div>
+                        <div id="adminRegionsList"></div>
+                    </div>
+                    <div class="admin-school-panel">
+                        <h3>Tumanlar</h3>
+                        <div id="adminDistrictForm" class="hidden">
+                            <div class="import-row" style="margin-bottom:8px">
+                                <input type="text" id="newDistrictName" placeholder="Tuman/Shahar nomi" class="school-select" style="flex:1">
+                                <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer">
+                                    <input type="checkbox" id="districtIsCity"> Shahar
+                                </label>
+                                <button class="btn-sm btn-edit" onclick="adminSaveDistrict()">+ Qo'shish</button>
+                            </div>
+                        </div>
+                        <div id="adminDistrictsList"><p class="empty">Viloyat tanlang</p></div>
+                    </div>
+                    <div class="admin-school-panel">
+                        <h3>Maktablar</h3>
+                        <div id="adminSchoolForm" class="hidden">
+                            <div style="margin-bottom:8px;display:flex;flex-direction:column;gap:6px">
+                                <input type="text" id="newSchoolName" placeholder="Maktab nomi" class="school-select">
+                                <input type="text" id="newSchoolNumber" placeholder="Raqami (1, 2, ...)" class="school-select">
+                                <button class="btn-sm btn-edit" onclick="adminSaveSchool()">+ Qo'shish</button>
+                            </div>
+                        </div>
+                        <div id="adminSchoolsList"><p class="empty">Tuman tanlang</p></div>
+                    </div>
+                </div>
+            </div>
+            <div id="adminResultsSection" class="section hidden">
+                <div class="section-header"><h2>📊 Barcha natijalar</h2></div>
+                <div id="adminResultsList"></div>
+            </div>
+            <div id="adminUsersSection" class="section hidden">
+                <div class="section-header"><h2>👥 O'quvchilar ro'yxati</h2></div>
+                <div id="adminUsersList"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL -->
+    <div id="modalOverlay" class="modal-overlay hidden" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header"><h3 id="modalTitle">-</h3><button onclick="closeModal()" class="modal-close">✕</button></div>
+            <div id="modalBody" class="modal-body"></div>
+        </div>
+    </div>
+    <div id="loadingOverlay" class="loading-overlay hidden"><div class="loader"></div></div>
+    <div id="toastContainer" class="toast-container"></div>
+</div>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
