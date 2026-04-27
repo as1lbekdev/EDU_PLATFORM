@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduPlatform</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 <div id="app">
-    <!-- AUTH -->
     <div id="authPage" class="auth-page">
         <div class="auth-bg"><div class="blob blob1"></div><div class="blob blob2"></div><div class="blob blob3"></div></div>
-        <div class="auth-card">
+        <div class="auth-card animate__animated animate__zoomIn">
             <div class="auth-brand">
                 <div class="brand-icon">📚</div>
                 <h1>EduPlatform</h1>
@@ -22,24 +21,22 @@
                 <button class="tab-btn active" onclick="switchTab('login',this)">Kirish</button>
                 <button class="tab-btn" onclick="switchTab('register',this)">Ro'yxat</button>
             </div>
-            <div id="loginForm" class="auth-form">
+            <div id="loginForm" class="auth-form animate__animated animate__fadeIn">
                 <div class="form-group"><label>Elektron pochta</label><input type="email" id="loginEmail" placeholder="email@gmail.com"></div>
                 <div class="form-group"><label>Parol</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
                 <div id="loginError" class="error-msg hidden"></div>
                 <button class="btn-primary" onclick="login()">Kirish →</button>
             </div>
-            <!-- Ro'yxat 1-bosqich: Email + Kod yuborish -->
-            <div id="registerForm" class="auth-form hidden">
+            <div id="registerForm" class="auth-form hidden animate__animated animate__fadeInRight">
                 <div class="form-group"><label>To'liq ism</label><input type="text" id="regName" placeholder="Ism Familiya"></div>
                 <div class="form-group"><label>Gmail pochta</label><input type="email" id="regEmail" placeholder="email@gmail.com"></div>
                 <div class="form-group"><label>Parol</label><input type="password" id="regPassword" placeholder="Kamida 6 ta belgi"></div>
                 <div id="regError" class="error-msg hidden"></div>
                 <button class="btn-primary" id="sendCodeBtn" onclick="sendCode()">📧 Emailga kod yuborish →</button>
             </div>
-            <!-- Ro'yxat 2-bosqich: Kod tasdiqlash -->
-            <div id="verifyForm" class="auth-form hidden">
+            <div id="verifyForm" class="auth-form hidden animate__animated animate__flipInY">
                 <div class="verify-info">
-                    <div style="font-size:32px;margin-bottom:8px">📧</div>
+                    <div style="font-size:32px;margin-bottom:8px" class="animate__animated animate__bounceIn animate__infinite">📧</div>
                     <p id="verifyEmailText" style="font-weight:600;color:var(--primary)"></p>
                     <p style="color:var(--text-muted);font-size:13px">Emailingizga 6 raqamli kod yuborildi</p>
                 </div>
@@ -55,9 +52,9 @@
                 <button class="btn-secondary" style="width:100%;margin-top:8px;background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer" onclick="backToRegister()">← Orqaga</button>
             </div>
         </div>
+
     </div>
 
-    <!-- STUDENT DASHBOARD -->
     <div id="studentDashboard" class="dashboard hidden">
         <aside class="sidebar">
             <div class="sidebar-brand">📚 EduPlatform</div>
@@ -191,7 +188,6 @@
         </main>
     </div>
 
-    <!-- ADMIN DASHBOARD -->
     <div id="adminDashboard" class="dashboard hidden">
         <aside class="sidebar sidebar-admin">
             <div class="sidebar-brand">⚙️ Admin Panel</div>
@@ -273,9 +269,8 @@
         </main>
     </div>
 
-    <!-- MODAL -->
     <div id="modalOverlay" class="modal-overlay hidden" onclick="closeModal()">
-        <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal animate__animated animate__bounceIn" onclick="event.stopPropagation()">
             <div class="modal-header"><h3 id="modalTitle">-</h3><button onclick="closeModal()" class="modal-close">✕</button></div>
             <div id="modalBody" class="modal-body"></div>
         </div>
