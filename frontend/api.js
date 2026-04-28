@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8085';
+const API_BASE = 'https://edu-platform-1.onrender.com';
 let authToken = localStorage.getItem('token');
 
 async function api(method, path, body = null, isForm = false) {

@@ -1,4 +1,3 @@
-
 package uz.eduplatform.service;
 
 import lombok.RequiredArgsConstructor;
@@ -73,6 +72,7 @@ public class PasswordResetService {
                 },
                 () -> { throw new RuntimeException("Foydalanuvchi topilmadi"); }
         );
+
 
         verificationRepository.delete(v);
     }

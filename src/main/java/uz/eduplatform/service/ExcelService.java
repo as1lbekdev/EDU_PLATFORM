@@ -63,16 +63,14 @@ public class ExcelService {
             String opt3 = str(row.getCell(3));
             String opt4 = str(row.getCell(4));
 
-            // F ustuni: 1, 2, 3, yoki 4 (1-asosida)
             int correctRaw = (int) Math.round(numVal(row.getCell(5)));
 
-            // 1-4 oraliqda bo'lishi kerak
             if (correctRaw < 1 || correctRaw > 4) {
                 System.err.println("Row " + rowNum + ": to'g'ri javob " + correctRaw + " - 1-4 oraliqda bo'lishi kerak!");
                 return null;
             }
 
-            int correctIndex = correctRaw - 1; // 0-asosiga o'tkazish
+            int correctIndex = correctRaw - 1;
 
             Question q = new Question();
             q.setQuestionText(questionText);

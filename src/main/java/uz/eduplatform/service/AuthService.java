@@ -26,10 +26,14 @@ public class AuthService {
     public void sendVerificationCode(String email) {
         if (userRepository.existsByEmail(email))
             throw new RuntimeException("Bu email allaqachon ro'yxatdan o'tgan");
+
         verificationRepository.deleteByEmail(email);
+        verificationRepository.flush();
+
         String code = String.format("%06d", new Random().nextInt(999999));
         EmailVerification v = new EmailVerification();
-        v.setEmail(email); v.setCode(code);
+        v.setEmail(email);
+        v.setCode(code);
         v.setExpiresAt(LocalDateTime.now().plusMinutes(10));
         verificationRepository.save(v);
         emailService.sendVerificationCode(email, code);

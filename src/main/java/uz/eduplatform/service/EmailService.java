@@ -145,4 +145,42 @@ public class EmailService {
                 statusColor, statusColor, statusColor, statusText,
                 message);
     }
+
+    // ===== 4. Parolni tiklash kodi =====
+    public void sendPasswordResetCode(String email, String code) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(email);
+            helper.setSubject("EduPlatform - Parolni tiklash kodi");
+            String html = String.format("""
+                <div style='font-family:Arial;max-width:500px;margin:auto;padding:30px;
+                            border-radius:16px;border:1px solid #e2e8f0'>
+                    <div style='text-align:center;margin-bottom:24px'>
+                        <h1 style='color:#2563eb;font-size:28px;margin:0'>📚 EduPlatform</h1>
+                        <p style='color:#64748b;margin-top:8px'>Maktab o'quvchilari uchun online ta'lim</p>
+                    </div>
+                    <h2 style='color:#0f172a;font-size:20px'>🔐 Parolni tiklash</h2>
+                    <p style='color:#475569;line-height:1.6'>
+                        Parolingizni tiklash uchun quyidagi kodni kiriting:
+                    </p>
+                    <div style='background:#fef3c7;border-radius:12px;padding:24px;
+                                text-align:center;margin:20px 0;border:2px solid #f59e0b'>
+                        <div style='font-size:40px;font-weight:800;letter-spacing:12px;
+                                    color:#d97706;font-family:monospace'>%s</div>
+                    </div>
+                    <p style='color:#94a3b8;font-size:13px'>
+                        ⏱️ Bu kod <b>10 daqiqa</b> davomida amal qiladi.<br>
+                        Agar siz parol tiklashni so'ramagan bo'lsangiz, bu xabarni e'tiborsiz qoldiring.
+                    </p>
+                </div>
+                """, code);
+            helper.setText(html, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Parol tiklash kodi yuborishda xatolik: " + e.getMessage());
+            throw new RuntimeException("Email yuborib bo'lmadi: " + e.getMessage());
+        }
+    }
+
 }

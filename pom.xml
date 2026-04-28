@@ -28,14 +28,12 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- TEST uchun Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- Mockito (ba’zida alohida kerak bo‘ladi) -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
