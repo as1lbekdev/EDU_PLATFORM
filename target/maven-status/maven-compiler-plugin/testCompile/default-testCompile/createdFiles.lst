@@ -1,0 +1,5 @@
+AuthServiceFunctionalTest.class
+AiServiceFunctionalTest.class
+TestServiceFunctionalTest.class
+ExcelServiceFunctionalTest.class
+EmailServiceFunctionalTest.class
